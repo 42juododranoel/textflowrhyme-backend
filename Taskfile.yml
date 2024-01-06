@@ -1,0 +1,86 @@
+version: '3'
+
+vars:
+  PYTHON_VERSION: 3.11.0
+  PYENV_NAME: textflowrhyme
+
+tasks:
+  # Infrastructure Section (for your general convenience)
+
+  install:taskfile:
+    cmds:
+      - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+
+  install:pyenv:
+    cmds:
+      - bash -c "[[ -v PYENV_ROOT ]] && echo 'Skipping installation…' || curl https://pyenv.run | bash"
+      - pyenv install --skip-existing {{ .PYTHON_VERSION }}
+      - pyenv virtualenv {{ .PYTHON_VERSION }} {{ .PYENV_NAME }} || true
+
+  install:poetry:
+    cmds:
+      - curl -sSL https://install.python-poetry.org | python3 -
+
+  install:nltk:
+    cmds:
+      - python3 -c 'import nltk; nltk.download("punkt")'
+
+  install:packages:
+    cmds:
+      - poetry install
+
+
+  # Development Section (use these commands when developing)
+
+  run:
+    cmds:
+      - uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+    dir: ./textflowrhyme
+
+  test:
+    cmds:
+      - pytest -svv {{.CLI_ARGS}}
+
+  format:isort:
+    cmds:
+      - isort --profile black .
+    dir: ./textflowrhyme
+
+  format:ruff:
+    cmds:
+      - ruff check --fix-only --ignore COM819 .
+      - ruff format
+    dir: ./textflowrhyme
+
+  format:
+    cmds:
+      - task: format:isort
+      - task: format:ruff
+
+  lint:ruff:
+    cmds:
+      - ruff check .
+    dir: ./textflowrhyme
+
+  lint:mypy:
+    cmds:
+      - mypy --strict .
+    dir: ./textflowrhyme
+
+  lint:
+    cmds:
+      - task: lint:ruff
+      # - task: lint:mypy
+
+
+  # Deployment Section (run by Docker)
+
+  deploy:build:
+    cmds:
+      - poetry install --only=main --no-root --no-interaction --no-ansi
+      - task: install:nltk
+
+  deploy:run:
+    cmds:
+      - uvicorn app:app --host 0.0.0.0 --port 8000
+    dir: ./textflowrhyme
