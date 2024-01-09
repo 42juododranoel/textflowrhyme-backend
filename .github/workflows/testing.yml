@@ -10,7 +10,7 @@ env:
   TESTING_TAG: 42juododranoel/textflowrhyme-backend:testing
 
 jobs:
-  docker:
+  test:
     runs-on: ubuntu-latest
 
     steps:

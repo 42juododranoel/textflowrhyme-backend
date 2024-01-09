@@ -9,12 +9,12 @@ env:
   DEPLOYMENT_TAG: 42juododranoel/textflowrhyme-backend:latest
 
 jobs:
-  testing:
+  test:
     uses: 42juododranoel/textflowrhyme-backend/.github/workflows/testing.yml@master
 
-  deployment:
+  deploy:
     runs-on: ubuntu-latest
-    needs: [testing]
+    needs: [test]
   
     steps:
       - name: Checkout
