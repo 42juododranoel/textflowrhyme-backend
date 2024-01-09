@@ -1,4 +1,9 @@
-FROM python:3.11.6-slim-bookworm
+FROM python:3.11.6-slim-bookworm AS python-base
+
+# The result of this Dockerfile is an /app folder that mirrors this Dockerfile's directory.
+# All code and dependencies are root-owned, but the task starts as user.
+# Target python-testing is meant for CI linting and testing,
+# target python-deployment is meant to be run in production
 
 # Declare environment variables
 ENV \
@@ -19,6 +24,9 @@ ENV \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     PATH=/venv/.venv/bin:$PATH \
     \
+    # Ruff
+    RUFF_CACHE_DIR=/tmp \
+    \
     # Taskfile
     TASK_VERSION=3.12.1 \
     \
@@ -27,52 +35,53 @@ ENV \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
 
-# Update system dependencies
-RUN \
-    set -ex \
+# This container works only through Taskfile
+EXPOSE 8000
+ENTRYPOINT ["task"]
+
+RUN set -ex \
+    \
+    # Update system dependencies
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
         locales \
         gettext \
-        gosu \
         wget \
-        libpq-dev \
-    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* 
-
-# Configure locales
-RUN \
-    set -ex \
+    && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
+    \
+    # Configure locales
     && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
-    && locale-gen
-
-# Install Taskfile
-RUN \
-    set -ex \
+    && locale-gen \
+    \
+    # Create a non-root user
+    && addgroup --gid 10001 user && adduser --uid 10000 --gid 10001 user \
+    \
+    # Install Taskfile
     && wget --progress=dot:giga https://github.com/go-task/task/releases/download/v${TASK_VERSION}/task_linux_amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf task_linux_amd64.tar.gz \
     && rm task_linux_amd64.tar.gz \
-    && chown root:root /usr/local/bin/task
+    && chown root:root /usr/local/bin/task \
+    \
+    # Install Poetry
+    && pip install -U pip setuptools \
+    && pip install poetry==${POETRY_VERSION}
 
-# Install project dependencies with Poetry
+
+FROM python-base AS python-runtime
+
+# Target can be either "testing" or "deployment"
+ARG TARGET
+
+# Install project dependencies
 WORKDIR /venv
 COPY Taskfile.yml poetry.lock pyproject.toml ./
-RUN \
-    set -ex \
-    && pip install -U pip setuptools \
-    && pip install poetry==${POETRY_VERSION} \
-    && task deploy:build
 
-# Create a non-root user
-RUN addgroup --gid 10001 user && adduser --uid 10000 --gid 10001 user
+# Install dependencies
+RUN task build:${TARGET}
 
 # Copy project into user folder
 WORKDIR /app
 COPY . /app
-
-# The result of this Dockerfile is an /app folder that mirrors this Dockerfile's directory.
-# All code and dependencies are root-owned, but the task starts as user.
 USER user
-EXPOSE 8000
-ENTRYPOINT ["task"]
-CMD ["deploy:run"]
+CMD ["start:${TARGET}"]

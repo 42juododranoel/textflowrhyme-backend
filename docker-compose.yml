@@ -1,15 +1,12 @@
 version: '3'
 
-volumes:
-  pg_data:
-
 x-python: &python
   build:
     context: ./
     dockerfile: ./Dockerfile
     args:
-      - REQUIREMENTS
-  restart: unless-stopped
+      TARGET: ${TARGET}
+  command: start:${TARGET}
 
 services:
   api:

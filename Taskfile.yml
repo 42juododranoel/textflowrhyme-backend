@@ -5,7 +5,9 @@ vars:
   PYENV_NAME: textflowrhyme
 
 tasks:
-  # Infrastructure Section (for your general convenience)
+  # The following commands are saved there for general convenience.
+  # Some of them may be also run during deployments.
+  # They are intended to be run by humans
 
   install:taskfile:
     cmds:
@@ -25,12 +27,8 @@ tasks:
     cmds:
       - python3 -c 'import nltk; nltk.download("punkt")'
 
-  install:packages:
-    cmds:
-      - poetry install
 
-
-  # Development Section (use these commands when developing)
+  # The following commands are intended to be used during development and CI
 
   run:
     cmds:
@@ -73,14 +71,24 @@ tasks:
       # - task: lint:mypy
 
 
-  # Deployment Section (run by Docker)
+  # The following commands are intended to be run by Docker inside the container
 
-  deploy:build:
+  build:testing:
+    cmds:
+      - poetry install --no-root --no-interaction --no-ansi
+      - task: install:nltk
+
+  build:deployment:
     cmds:
       - poetry install --only=main --no-root --no-interaction --no-ansi
       - task: install:nltk
 
-  deploy:run:
+  start:testing:
     cmds:
-      - uvicorn app:app --host 0.0.0.0 --port 8000
+      - task: lint
+      - task: test
+
+  start:deployment:
+    cmds:
+      - uvicorn app:app --host 0.0.0.0 --port 8000 --reload
     dir: ./textflowrhyme
