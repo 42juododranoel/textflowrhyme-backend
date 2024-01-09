@@ -1,5 +1,8 @@
 version: '3'
 
+# This file is only there for developer convenience,
+# it is not used in testing or deployments
+
 x-python: &python
   build:
     context: ./
