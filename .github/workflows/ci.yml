@@ -43,7 +43,7 @@ jobs:
         run: |
           docker run --rm ${{ env.TEST_TAG }}     
 
-     - name: Build & Push to Docker Hub
+      - name: Build & Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
           context: .
