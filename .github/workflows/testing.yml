@@ -2,6 +2,8 @@ name: Testing
 
 on:
   push:
+    branches-ignore:
+      - master
 
 env:
   TESTING_TAG: 42juododranoel/textflowrhyme-backend:testing
