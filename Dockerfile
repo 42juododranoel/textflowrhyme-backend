@@ -71,7 +71,7 @@ RUN set -ex \
 FROM python-base AS python-runtime
 
 # Target can be either "testing" or "deployment"
-ARG TARGET
+ARG TARGET=deployment
 
 # Install project dependencies
 WORKDIR /venv
@@ -84,3 +84,6 @@ RUN task build:${TARGET}
 WORKDIR /app
 COPY . /app
 USER user
+
+# Override this command manually when testing
+CMD start:deployment
