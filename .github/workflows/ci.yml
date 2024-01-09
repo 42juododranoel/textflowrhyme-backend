@@ -36,6 +36,7 @@ jobs:
 
       - name: Lint & Test
         run: |
+          docker image ls
           docker run --rm ${{ env.TEST_TAG }}     
 
       - name: Build & Push to Docker Hub
