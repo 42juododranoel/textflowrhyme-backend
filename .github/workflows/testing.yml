@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - master
+  workflow_call:
 
 env:
   TESTING_TAG: 42juododranoel/textflowrhyme-backend:testing
