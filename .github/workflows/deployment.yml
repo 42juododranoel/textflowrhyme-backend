@@ -10,7 +10,7 @@ env:
 
 jobs:
   testing:
-    uses: 42juododranoel/textflowrhyme-backend/.github/workflows/testing.yml@main
+    uses: 42juododranoel/textflowrhyme-backend/.github/workflows/testing.yml@master
 
   deployment:
     runs-on: ubuntu-latest
