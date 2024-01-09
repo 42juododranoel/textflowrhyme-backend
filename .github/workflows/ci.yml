@@ -31,6 +31,7 @@ jobs:
         with:
           context: .
           tags: ${{ env.TEST_TAG }}
+          load: true
           build-args: |
             TARGET=testing
 
