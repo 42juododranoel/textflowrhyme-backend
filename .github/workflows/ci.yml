@@ -4,8 +4,8 @@ on:
   - push
 
 env:
-  TEST_TAG: user/app:test
-  LATEST_TAG: user/app:latest
+  TEST_TAG: 42juododranoel/textflowrhyme-backend:test
+  LATEST_TAG: 42juododranoel/textflowrhyme-backend:latest
 
 jobs:
   docker:
@@ -36,9 +36,9 @@ jobs:
           build-args: |
             TARGET=testing
 
-      - name: Test
+      - name: Lint & Test
         run: |
-          docker run --rm ${{ env.TEST_TAG }}          
+          docker run --rm ${{ env.TEST_TAG }} start:testing      
 
       - name: Build and push
         uses: docker/build-push-action@v5

@@ -84,4 +84,3 @@ RUN task build:${TARGET}
 WORKDIR /app
 COPY . /app
 USER user
-CMD ["start:${TARGET}"]
