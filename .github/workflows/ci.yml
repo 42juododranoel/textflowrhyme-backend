@@ -5,26 +5,21 @@ on:
   - pull_request
 
 env:
-  IMAGE_NAME: 42juododranoel/textflowrhyme-backend
+  TEST_TAG: 42juododranoel/textflowrhyme-backend:test
+  LATEST_TAG: 42juododranoel/textflowrhyme-backend:latest
 
 jobs:
   testing:
     name: Testing
     runs-on: ubuntu-latest
 
-    services:
-      registry:
-        image: registry:2
-        ports:
-          - 5001:5000
-
-    env:
-      TEST_TAG: localhost:5001/actions/hello-world-docer-action:latest
-
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Setup Docker BuildX
         id: setup-buildx
