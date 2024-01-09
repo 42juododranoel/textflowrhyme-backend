@@ -11,7 +11,8 @@ env:
 jobs:
   testing:
     name: Testing
-
+    runs-on: ubuntu-latest
+    
     services:
       registry:
         image: registry:2
