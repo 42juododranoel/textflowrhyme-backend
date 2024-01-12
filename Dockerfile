@@ -2,11 +2,20 @@ FROM python:3.11.6-slim-bookworm AS python-base
 
 # The result of this Dockerfile is an /app folder that mirrors this Dockerfile's directory.
 # All code and dependencies are root-owned, but the task starts as user.
-# Target python-testing is meant for CI linting and testing,
-# target python-deployment is meant to be run in production
+# Target "testing" is meant for CI linting and testing,
+# target "deployment" is meant to be run in production
 
 # Declare environment variables
-ENV \
+ENV PATH=/app/.venv/bin:$PATH \
+    \
+    # Taskfile
+    TASK_VERSION=3.12.1 \
+    \
+    # Locales
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    \
     # Python
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -22,22 +31,15 @@ ENV \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=true \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
-    PATH=/venv/.venv/bin:$PATH \
     \
     # Ruff
-    RUFF_CACHE_DIR=/tmp \
-    \
-    # Taskfile
-    TASK_VERSION=3.12.1 \
-    \
-    # Locales
-    LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8
+    RUFF_CACHE_DIR=/tmp
 
-# This container works only through Taskfile
+# This container works only through Taskfile.
+# Override command manually on run if target is "testing"
 EXPOSE 8000
 ENTRYPOINT ["task"]
+CMD start:deployment
 
 RUN set -ex \
     \
@@ -45,6 +47,7 @@ RUN set -ex \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
+        ca-certificates \
         locales \
         gettext \
         wget \
@@ -54,9 +57,6 @@ RUN set -ex \
     && sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen \
     && locale-gen \
     \
-    # Create a non-root user
-    && addgroup --gid 10001 user && adduser --uid 10000 --gid 10001 user \
-    \
     # Install Taskfile
     && wget --progress=dot:giga https://github.com/go-task/task/releases/download/v${TASK_VERSION}/task_linux_amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf task_linux_amd64.tar.gz \
@@ -65,7 +65,10 @@ RUN set -ex \
     \
     # Install Poetry
     && pip install -U pip setuptools \
-    && pip install poetry==${POETRY_VERSION}
+    && pip install poetry==${POETRY_VERSION} \
+    \
+    # Create a non-root user
+    && addgroup --gid 10001 user && adduser --uid 10000 --gid 10001 user
 
 
 FROM python-base AS python-runtime
@@ -74,7 +77,7 @@ FROM python-base AS python-runtime
 ARG TARGET=deployment
 
 # Install project dependencies
-WORKDIR /venv
+WORKDIR /app
 COPY Taskfile.yml poetry.lock pyproject.toml ./
 
 # Install dependencies
@@ -84,6 +87,3 @@ RUN task build:${TARGET}
 WORKDIR /app
 COPY . /app
 USER user
-
-# Override this command manually when testing
-CMD start:deployment
