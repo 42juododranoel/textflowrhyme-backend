@@ -43,4 +43,12 @@ jobs:
             TARGET=deployment
 
   deployment:
-    uses: 42juododranoel/textflowrhyme-infrastructure/.github/workflows/deployment.yml@master
+    needs: [build]
+    steps:
+      - name: Deploy
+        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        with:
+          owner: 42juododranoel
+          repo: textflowrhyme-infrastructure
+          github_token: ${{ secrets.GITHUB_PAT }}
+          workflow_file_name: deployment.yml
