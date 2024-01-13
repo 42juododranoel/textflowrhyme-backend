@@ -50,5 +50,5 @@ jobs:
         with:
           owner: 42juododranoel
           repo: textflowrhyme-infrastructure
-          github_token: ${{ secrets.GITHUB_PAT }}
+          github_token: ${{ secrets._GITHUB_PAT }}
           workflow_file_name: deployment.yml
