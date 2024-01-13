@@ -44,6 +44,7 @@ jobs:
 
   deployment:
     needs: [build]
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy
         uses: convictional/trigger-workflow-and-wait@v1.6.1
