@@ -53,3 +53,4 @@ jobs:
           repo: textflowrhyme-infrastructure
           github_token: ${{ secrets._GITHUB_PAT }}
           workflow_file_name: deployment.yml
+          ref: master
