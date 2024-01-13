@@ -5,30 +5,7 @@ vars:
   PYENV_NAME: textflowrhyme
 
 tasks:
-  # The following commands are saved there for general convenience.
-  # Some of them may be also run during deployments.
-  # They are intended to be run by humans
-
-  install:taskfile:
-    cmds:
-      - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
-
-  install:pyenv:
-    cmds:
-      - bash -c "[[ -v PYENV_ROOT ]] && echo 'Skipping installation…' || curl https://pyenv.run | bash"
-      - pyenv install --skip-existing {{ .PYTHON_VERSION }}
-      - pyenv virtualenv {{ .PYTHON_VERSION }} {{ .PYENV_NAME }} || true
-
-  install:poetry:
-    cmds:
-      - curl -sSL https://install.python-poetry.org | python3 -
-
-  install:nltk:
-    cmds:
-      - python3 -c 'import nltk; nltk.download("punkt")'
-
-
-  # The following commands are intended to be used during development and CI
+  # Development & CI
 
   run:
     cmds:
@@ -70,8 +47,7 @@ tasks:
       - task: lint:ruff
       # - task: lint:mypy
 
-
-  # The following commands are intended to be run by Docker inside the container
+  # Docker
 
   build:testing:
     cmds:
@@ -90,5 +66,25 @@ tasks:
 
   start:deployment:
     cmds:
-      - uvicorn app:app --host 0.0.0.0 --port 8000 --reload
+      - uvicorn app:app --host 0.0.0.0 --port 8000
     dir: ./textflowrhyme
+
+  # Convenience
+
+  install:taskfile:
+    cmds:
+      - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d
+
+  install:pyenv:
+    cmds:
+      - bash -c "[[ -v PYENV_ROOT ]] && echo 'Skipping installation…' || curl https://pyenv.run | bash"
+      - pyenv install --skip-existing {{ .PYTHON_VERSION }}
+      - pyenv virtualenv {{ .PYTHON_VERSION }} {{ .PYENV_NAME }} || true
+
+  install:poetry:
+    cmds:
+      - curl -sSL https://install.python-poetry.org | python3 -
+
+  install:nltk:
+    cmds:
+      - python3 -c 'import nltk; nltk.download("punkt")'
