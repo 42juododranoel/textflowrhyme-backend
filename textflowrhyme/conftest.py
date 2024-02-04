@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 
 from textflowrhyme.app import get_app
+from textflowrhyme.database.engine import engine
+from textflowrhyme.database.model import BaseModel
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -21,3 +23,11 @@ def app() -> FastAPI:
 def as_anon(app: FastAPI) -> AsyncClient:
     """Test client."""
     return AsyncClient(app=app, base_url="http://test")
+
+
+@pytest.fixture(autouse=True)
+def recreate_tables(request) -> None:
+    """Recreate all tables before each test run."""
+
+    BaseModel.metadata.drop_all(engine)
+    BaseModel.metadata.create_all(engine)

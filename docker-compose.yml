@@ -14,3 +14,12 @@ x-python: &python
 services:
   api:
     <<: *python
+
+  database:
+    image: postgres
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password1234
+      - POSTGRES_DB=textflowrhyme
+    ports:
+      - 5432:5432
