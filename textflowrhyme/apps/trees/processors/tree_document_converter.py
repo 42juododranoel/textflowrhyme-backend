@@ -49,6 +49,13 @@ class TreeDocumentConverter(Processor):
             )
             marks.append(fatigue_mark)
 
+        if span.pos is not None:
+            pos_mark = NodeMark(
+                type=NodeMarkType.POS,
+                attrs=NodeMarkAttrs(value=span.pos),
+            )
+            marks.append(pos_mark)
+
         if sentence.length is not None:
             length_mark = NodeMark(
                 type=NodeMarkType.LENGTH,

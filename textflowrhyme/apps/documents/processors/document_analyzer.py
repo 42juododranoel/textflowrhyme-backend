@@ -13,6 +13,10 @@ from textflowrhyme.apps.trees.processors.tree_length_analyzer import (
     AnalyzeLengthParams,
     TreeLengthAnalyzer,
 )
+from textflowrhyme.apps.trees.processors.tree_pos_analyzer import (
+    AnalyzePosParams,
+    TreePosAnalyzer,
+)
 from textflowrhyme.base.entities import Entity
 from textflowrhyme.base.processors import Processor
 
@@ -22,6 +26,7 @@ class DocumentAnalyzeParams(Entity):
 
     fatigue: AnalyzeFatigueParams | None = None
     length: AnalyzeLengthParams | None = None
+    pos: AnalyzePosParams | None = None
 
 
 class DocumentAnalyzer(Processor[NodeDocument]):
@@ -45,6 +50,11 @@ class DocumentAnalyzer(Processor[NodeDocument]):
         if self.params.length:
             tree_length_analyzer = TreeLengthAnalyzer(tree=tree, params=self.params.length)
             tree_length_analyzer.run()
+
+        # Optionally analyze PoS
+        if self.params.pos:
+            tree_pos_analyzer = TreePosAnalyzer(tree=tree, params=self.params.pos)
+            tree_pos_analyzer.run()
 
         # Tree -> Document
         tree_document_converter = TreeDocumentConverter(tree=tree)

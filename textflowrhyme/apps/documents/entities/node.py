@@ -10,6 +10,7 @@ class NodeMarkType(StrEnum):
 
     LENGTH = "length"
     FATIGUE = "fatigue"
+    POS = "pos"
 
 
 class NodeMarkAttrs(Entity):

@@ -31,6 +31,7 @@ class TreeSpan(Entity):
     category: str = "span"
 
     fatigue: int | None = None
+    pos: str | None = None
 
 
 class TreeSpans(Entity):
@@ -46,6 +47,7 @@ class TreeSentence(Entity):
     content: str
     spans: TreeSpans
     category: str = "sentence"
+
     length: int | None = None
 
 
