@@ -1,11 +1,12 @@
-from textflowrhyme.apps.books.api.serializers.page import PageSerializer
-from textflowrhyme.base.api.serializers import Serializer
+from textflowrhyme.apps.books.api.serializers.page import PageResult
+from textflowrhyme.base.api.serializers import Payload, Result
 
 
-class BookUpsertSerializer(Serializer):
+class BookUpsertPayload(Payload):
     title: str | None
 
 
-class BookSerializer(BookUpsertSerializer):
+class BookResult(Result):
     id: int
-    pages: list[PageSerializer]
+    title: str
+    pages: list[PageResult]

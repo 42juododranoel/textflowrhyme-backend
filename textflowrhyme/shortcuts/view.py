@@ -2,12 +2,13 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from textflowrhyme.base.api.serializers import (
-    CollectionResponseSerializer,
-    InstanceResponseSerializer,
-    InstanceSerializerType,
-    Serializer,
+    CollectionResult,
+    InstanceResult,
+    InstanceTypeResult,
+    Payload,
+    Result,
 )
-from textflowrhyme.base.database.model import BaseModel
+from textflowrhyme.base.database.model_type import Model
 from textflowrhyme.base.database.session import Session
 
 
@@ -17,83 +18,83 @@ class ViewShortcuts:
     @classmethod
     def render_instance(
         cls,
-        instance: BaseModel,
-        serializer: Serializer,
-    ) -> InstanceResponseSerializer[InstanceSerializerType]:
-        return InstanceResponseSerializer(
-            instance=serializer(**instance.as_dict()),
+        instance: Model,
+        result_type: Result,
+    ) -> InstanceResult[InstanceTypeResult]:
+        return InstanceResult(
+            instance=result_type(**instance.as_dict()),
         )
 
     @classmethod
     def render_collection(
         cls,
-        collection: list[BaseModel],
-        list_serializer: Serializer,
-    ) -> CollectionResponseSerializer[InstanceSerializerType]:
-        return CollectionResponseSerializer(
-            collection=[list_serializer(**instance.as_dict()) for instance in collection],
+        collection: list[Model],
+        result_type: Result,
+    ) -> CollectionResult[InstanceTypeResult]:
+        return CollectionResult(
+            collection=[result_type(**instance.as_dict()) for instance in collection],
             count=len(collection),
         )
 
     @classmethod
     def list_collection(
         cls,
-        model: BaseModel,
-        list_serializer: Serializer,
-    ) -> CollectionResponseSerializer[InstanceSerializerType]:
+        model_type: type[Model],
+        result_type: type[Result],
+    ) -> CollectionResult[InstanceTypeResult]:
         with Session() as session:
-            statement = select(model).options(selectinload(*model.SELECTINS))
+            statement = select(model_type).options(selectinload(*model_type.SELECTINS))
             collection = session.scalars(statement).fetchall()
 
-        return cls.render_collection(collection, list_serializer)
+        return cls.render_collection(collection, result_type)
 
     @classmethod
     def retrieve_instance(
         cls,
-        model: BaseModel,
-        instance_id: BaseModel.Id,
-        retrieve_serializer: Serializer,
-    ) -> InstanceResponseSerializer[InstanceSerializerType]:
+        model_type: type[Model],
+        instance_id: Model.Id,
+        result_type: type[Result],
+    ) -> InstanceResult[InstanceTypeResult]:
         with Session() as session:
             statement = (
-                select(model).where(model.id == instance_id).options(selectinload(*model.SELECTINS))
+                select(model_type).where(model_type.id == instance_id).options(selectinload(*model_type.SELECTINS))
             )
             instance = session.scalars(statement).unique().one()
 
-        return cls.render_instance(instance, retrieve_serializer)
+        return cls.render_instance(instance, result_type)
 
     @classmethod
     def create_instance(
         cls,
-        model: BaseModel,
-        payload: Serializer,
-        retrieve_serializer: Serializer,
-    ) -> InstanceResponseSerializer[InstanceSerializerType]:
+        model_type: type[Model],
+        payload: Payload,
+        result_type: type[Result],
+    ) -> InstanceResult[InstanceTypeResult]:
         with Session() as session:
-            instance = model(**payload.dict())
+            instance = model_type(**payload.dict())
             session.add(instance)
             session.commit()
 
-        return cls.retrieve_instance(model, instance.id, retrieve_serializer)
+        return cls.retrieve_instance(model_type, instance.id, result_type)
 
     @classmethod
     def update_instance(
         cls,
-        model: BaseModel,
-        instance_id: BaseModel.Id,
-        payload: Serializer,
-        retrieve_serializer: Serializer,
-    ) -> InstanceResponseSerializer[InstanceSerializerType]:
+        model_type: type[Model],
+        instance_id: Model.Id,
+        payload: Payload,
+        result_type: type[Result],
+    ) -> InstanceResult[InstanceTypeResult]:
         with Session() as session:
-            session.query(model).filter(model.id == instance_id).update(payload.dict())
+            session.query(model_type).filter(model_type.id == instance_id).update(payload.dict())
             session.commit()
 
-        return cls.retrieve_instance(model, instance_id, retrieve_serializer)
+        return cls.retrieve_instance(model_type, instance_id, result_type)
 
     @classmethod
-    def delete_instance(cls, model: BaseModel, instance_id: BaseModel.Id) -> None:
+    def delete_instance(cls, model_type: type[Model], instance_id: Model.Id) -> None:
         with Session() as session:
-            session.query(model).filter(model.id == instance_id).delete()
+            session.query(model_type).filter(model_type.id == instance_id).delete()
             session.commit()
 
 

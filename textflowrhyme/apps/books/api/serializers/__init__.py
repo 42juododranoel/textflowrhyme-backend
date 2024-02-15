@@ -1,15 +1,9 @@
-from textflowrhyme.apps.books.api.serializers.book import (
-    BookSerializer,
-    BookUpsertSerializer,
-)
-from textflowrhyme.apps.books.api.serializers.page import (
-    PageSerializer,
-    PageUpsertSerializer,
-)
+from textflowrhyme.apps.books.api.serializers.book import BookResult, BookUpsertPayload
+from textflowrhyme.apps.books.api.serializers.page import PageResult, PageUpsertPayload
 
 __all__ = [
-    "BookSerializer",
-    "BookUpsertSerializer",
-    "PageSerializer",
-    "PageUpsertSerializer",
+    "BookResult",
+    "BookUpsertPayload",
+    "PageResult",
+    "PageUpsertPayload",
 ]

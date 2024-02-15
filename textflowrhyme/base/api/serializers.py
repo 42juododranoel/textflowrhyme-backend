@@ -2,41 +2,29 @@ import typing
 
 from pydantic import BaseModel
 
-InstanceSerializerType = typing.TypeVar("InstanceSerializerType")
+InstanceTypeResult = typing.TypeVar("InstanceTypeResult")
 
 
 class Serializer(BaseModel):
     """Derive serializers from this."""
 
 
-class RequestSerializer(Serializer):
+class Payload(Serializer):
     """Derive request serializers from this."""
 
 
-class UpsertSerializer(RequestSerializer):
-    """Derive create and update serializers from this."""
-
-
-class CreateSerializer(UpsertSerializer):
-    """Derive create serializers from this."""
-
-
-class UpdateSerializer(UpsertSerializer):
-    """Derive update serializers from this."""
-
-
-class ResponseSerializer(Serializer):
+class Result(Serializer):
     """Derive response serializers from this."""
 
 
-class InstanceResponseSerializer(ResponseSerializer, typing.Generic[InstanceSerializerType]):
+class InstanceResult(Result, typing.Generic[InstanceTypeResult]):
     """Root instance response serializer."""
 
-    instance: InstanceSerializerType
+    instance: InstanceTypeResult
 
 
-class CollectionResponseSerializer(ResponseSerializer, typing.Generic[InstanceSerializerType]):
+class CollectionResult(Result, typing.Generic[InstanceTypeResult]):
     """Root collection response serializer."""
 
-    collection: list[InstanceSerializerType]
+    collection: list[InstanceTypeResult]
     count: int

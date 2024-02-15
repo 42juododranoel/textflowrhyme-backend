@@ -3,7 +3,7 @@ import typing
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
-class BaseModel(DeclarativeBase):
+class Model(DeclarativeBase):
     """Base model to derive others from."""
 
     # Fields
@@ -27,7 +27,7 @@ class BaseModel(DeclarativeBase):
         for key, value in self.__dict__.items():
             if isinstance(value, list):
                 result[key] = [
-                    subvalue.as_dict() if isinstance(subvalue, BaseModel) else subvalue
+                    subvalue.as_dict() if isinstance(subvalue, Model) else subvalue
                     for subvalue in value
                 ]
             else:

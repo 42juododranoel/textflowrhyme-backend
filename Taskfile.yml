@@ -39,7 +39,8 @@ tasks:
 
   lint:mypy:
     cmds:
-      - mypy --strict .
+      - mypy --config-file pyproject.toml .
+
     dir: ./textflowrhyme
 
   lint:

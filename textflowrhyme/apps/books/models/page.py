@@ -5,7 +5,7 @@ import typing
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from textflowrhyme.base.database.model import BaseModel
+from textflowrhyme.base.database.model import Model
 
 if typing.TYPE_CHECKING:
     from textflowrhyme.apps.books.models.book import Book
@@ -13,7 +13,7 @@ else:
     Book = "Book"
 
 
-class Page(BaseModel):
+class Page(Model):
     """A page stores textual data."""
 
     __tablename__ = "books__page"

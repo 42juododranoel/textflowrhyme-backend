@@ -30,6 +30,31 @@ pytest-httpx = "^0.28.0"
 [tool.isort]
 profile = "black"
 
+[tool.mypy]
+disallow_any_generics = true
+disallow_any_unimported = true
+disallow_any_expr = true
+disallow_any_decorated = true
+disallow_any_explicit = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = true
+implicit_optional = true
+strict_optional = true
+check_untyped_defs = true
+no_implicit_reexport = true
+strict_equality = true
+extra_checks = true
+local_partial_types = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+warn_unreachable = true
+warn_no_return = false
+
 [tool.ruff]
 line-length = 100
 select = ["ALL"]

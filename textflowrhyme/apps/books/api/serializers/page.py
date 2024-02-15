@@ -1,9 +1,10 @@
-from textflowrhyme.base.api.serializers import Serializer
+from textflowrhyme.base.api.serializers import Payload, Result
 
 
-class PageUpsertSerializer(Serializer):
+class PageUpsertPayload(Payload):
     content: str | None
 
 
-class PageSerializer(PageUpsertSerializer):
+class PageResult(Result):
     id: int
+    content: str
