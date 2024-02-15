@@ -1,14 +1,29 @@
 import pytest
 
-from textflowrhyme.apps.books.models.book import Book
-from textflowrhyme.database.session import Session
+from textflowrhyme.apps.books.models import Book, Page
+from textflowrhyme.base.database.session import Session
 
 
 @pytest.fixture
 def book() -> Book:
     with Session() as session:
-        book = Book()
+        book = Book(
+            title="On Writing Well",
+        )
         session.add(book)
         session.commit()
 
     return book
+
+
+@pytest.fixture
+def page(book: Book) -> Page:
+    with Session() as session:
+        page = Page(
+            content="{}",
+            book=book,
+        )
+        session.add(page)
+        session.commit()
+
+    return page

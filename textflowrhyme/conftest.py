@@ -1,10 +1,10 @@
 import pytest
+from _pytest.fixtures import SubRequest
 from fastapi import FastAPI
 from httpx import AsyncClient
 
 from textflowrhyme.app import get_app
-from textflowrhyme.database.engine import engine
-from textflowrhyme.database.model import BaseModel
+from textflowrhyme.shortcuts.database import database
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -26,8 +26,7 @@ def as_anon(app: FastAPI) -> AsyncClient:
 
 
 @pytest.fixture(autouse=True)
-def recreate_tables(request) -> None:
+def _recreate_tables(request: SubRequest) -> None:
     """Recreate all tables before each test run."""
 
-    BaseModel.metadata.drop_all(engine)
-    BaseModel.metadata.create_all(engine)
+    database.recreate_tables()

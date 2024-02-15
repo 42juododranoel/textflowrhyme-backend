@@ -45,7 +45,7 @@ tasks:
   lint:
     cmds:
       - task: lint:ruff
-      # - task: lint:mypy
+      - task: lint:mypy
 
   # Docker
 

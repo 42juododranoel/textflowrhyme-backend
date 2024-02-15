@@ -46,6 +46,7 @@ class Processor(typing.Generic[ProcessedResult]):
 
         3. self._fail(["foobar"], foo=["bar"])
         -> ValueError({"non_field_errors": ["foobar], "foo": ["bar"]})
+
         """
 
         messages = {**kwargs}

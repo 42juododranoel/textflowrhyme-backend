@@ -22,14 +22,14 @@ class NodeMarkAttrs(Entity):
 class NodeMark(Entity):
     """A mark stores additional information about a text node."""
 
-    type: NodeMarkType  # noqa: A003
+    type: NodeMarkType
     attrs: NodeMarkAttrs
 
 
 class NodeText(Entity):
     """A text is a smallest possible node, containing plain text."""
 
-    type: str = "text"  # noqa: A003
+    type: str = "text"
     text: str
     marks: list[NodeMark] = Field(default_factory=list)
 
@@ -37,12 +37,12 @@ class NodeText(Entity):
 class NodeParagraph(Entity):
     """A paragraph node contains multiple text node."""
 
-    type: str = "paragraph"  # noqa: A003
+    type: str = "paragraph"
     content: list[NodeText] = Field(default_factory=list)
 
 
 class NodeDocument(Entity):
     """A document node contains multiple paragraph nodes."""
 
-    type: str = "doc"  # noqa: A003
+    type: str = "doc"
     content: list[NodeParagraph] = Field(default_factory=list)
