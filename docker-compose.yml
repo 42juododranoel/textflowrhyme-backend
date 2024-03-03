@@ -1,7 +1,7 @@
 version: '3'
 
-# This file is only there for developer convenience,
-# it is not used in testing or deployments
+# This file is only there for developer convenience 
+# and should not be used for deployments.
 
 x-python: &python
   build:
@@ -9,17 +9,30 @@ x-python: &python
     dockerfile: ./Dockerfile
     args:
       TARGET: ${TARGET}
+  links:
+    - postgres
+  environment:
+    - DATABASE_NAME=textflowrhyme
+    - DATABASE_USERNAME=postgres
+    - DATABASE_PASSWORD=password1234
+    - DATABASE_HOST=postgres
+    - DATABASE_PORT=5432
   command: start:${TARGET}
 
 services:
-  api:
+  uvicorn:
     <<: *python
 
-  database:
-    image: postgres
+  postgres:
+    image: postgres:alpine
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+    user: postgres
     environment:
-      - POSTGRES_USER=user
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password1234
       - POSTGRES_DB=textflowrhyme
     ports:
-      - 5432:5432
+      - 5432:5432  # For local development only

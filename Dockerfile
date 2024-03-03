@@ -51,6 +51,7 @@ RUN set -ex \
         locales \
         gettext \
         wget \
+        libpq-dev \
     && rm -rf /var/cache/apt/* /var/lib/apt/lists/* \
     \
     # Configure locales

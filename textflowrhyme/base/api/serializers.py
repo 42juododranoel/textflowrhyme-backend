@@ -1,8 +1,8 @@
-import typing
+import typing as t
 
 from pydantic import BaseModel
 
-InstanceTypeResult = typing.TypeVar("InstanceTypeResult")
+InstanceTypeResult = t.TypeVar("InstanceTypeResult")
 
 
 class Serializer(BaseModel):
@@ -17,13 +17,13 @@ class Result(Serializer):
     """Derive response serializers from this."""
 
 
-class InstanceResult(Result, typing.Generic[InstanceTypeResult]):
+class InstanceResult(Result, t.Generic[InstanceTypeResult]):
     """Root instance response serializer."""
 
     instance: InstanceTypeResult
 
 
-class CollectionResult(Result, typing.Generic[InstanceTypeResult]):
+class CollectionResult(Result, t.Generic[InstanceTypeResult]):
     """Root collection response serializer."""
 
     collection: list[InstanceTypeResult]

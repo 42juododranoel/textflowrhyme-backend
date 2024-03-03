@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
 
-DATABASE_URL = "postgresql://user:password1234@localhost/textflowrhyme"
+from textflowrhyme.settings import settings
 
-engine = create_engine(url=DATABASE_URL, echo=True)
+engine = create_engine(url=str(settings.database_dsn), echo=True)

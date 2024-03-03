@@ -1,8 +1,7 @@
 from httpx import AsyncClient
 from starlette import status
 
-from textflowrhyme.apps.books.models.book import Book
-from textflowrhyme.apps.books.models.page import Page
+from textflowrhyme.apps.books.models import Book, Page
 
 
 async def test_list_books(as_anon: AsyncClient, book: Book, page: Page):

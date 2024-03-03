@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from sqlalchemy.exc import NoResultFound
 from starlette import status
 
-from textflowrhyme.apps.books.models.book import Book
+from textflowrhyme.apps.books.models import Book
 from textflowrhyme.shortcuts.database import database
 
 

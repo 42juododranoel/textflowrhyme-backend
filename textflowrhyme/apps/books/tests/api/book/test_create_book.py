@@ -1,7 +1,7 @@
 from httpx import AsyncClient
 from starlette import status
 
-from textflowrhyme.apps.books.models.book import Book
+from textflowrhyme.apps.books.models import Book
 from textflowrhyme.shortcuts.database import database
 
 
@@ -21,5 +21,9 @@ async def test_create_book(as_anon: AsyncClient):
             "title": "On Writing Well",
             "pages": [],
         },
+    }
+    assert created_book.as_dict() == {
+        "id": created_book.id,
+        "title": "On Writing Well",
     }
     assert response.status_code == status.HTTP_201_CREATED

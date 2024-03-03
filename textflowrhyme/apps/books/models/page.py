@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import typing
+import typing as t
 
 from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from textflowrhyme.base.database.model import Model
 
-if typing.TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from textflowrhyme.apps.books.models.book import Book
 else:
     Book = "Book"
@@ -20,7 +20,7 @@ class Page(Model):
 
     # Fields
 
-    content = Column(String(255))
+    content = Column(String(65535))
 
     # Relations
 

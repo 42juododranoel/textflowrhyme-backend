@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-import typing
+import typing as t
 
 from sqlalchemy import Column, String
 from sqlalchemy.orm import Mapped, relationship
 
 from textflowrhyme.base.database.model import Model
 
-if typing.TYPE_CHECKING:
+if t.TYPE_CHECKING:
     from textflowrhyme.apps.books.models.page import Page
 else:
     Page = "Page"
@@ -28,4 +28,4 @@ class Book(Model):
 
     # Meta
 
-    SELECTINS: typing.ClassVar = [pages]
+    SELECTINS: t.ClassVar = [pages]

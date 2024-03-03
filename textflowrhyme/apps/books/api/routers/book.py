@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from starlette import status
 
 from textflowrhyme.apps.books.api.serializers import BookResult, BookUpsertPayload
-from textflowrhyme.apps.books.models.book import Book
+from textflowrhyme.apps.books.models import Book
 from textflowrhyme.base.api.serializers import CollectionResult, InstanceResult
 from textflowrhyme.shortcuts.view import view
 

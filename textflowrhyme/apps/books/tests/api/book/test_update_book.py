@@ -1,9 +1,7 @@
-from unittest.mock import ANY
-
 from httpx import AsyncClient
 from starlette import status
 
-from textflowrhyme.apps.books.models.book import Book
+from textflowrhyme.apps.books.models import Book
 from textflowrhyme.shortcuts.database import database
 
 
@@ -23,9 +21,8 @@ async def test_update_book(as_anon: AsyncClient, book: Book):
             "pages": [],
         },
     }
-    assert updated_book.__dict__ == {
+    assert updated_book.as_dict() == {
         "id": book.id,
         "title": "new title",
-        "_sa_instance_state": ANY,
     }
     assert response.status_code == status.HTTP_200_OK

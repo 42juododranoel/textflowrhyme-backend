@@ -8,7 +8,7 @@ from textflowrhyme.base.api.serializers import (
     Payload,
     Result,
 )
-from textflowrhyme.base.database.model_type import Model
+from textflowrhyme.base.database.model import Model
 from textflowrhyme.base.database.session import Session
 
 
@@ -19,7 +19,7 @@ class ViewShortcuts:
     def render_instance(
         cls,
         instance: Model,
-        result_type: Result,
+        result_type: type[Result],
     ) -> InstanceResult[InstanceTypeResult]:
         return InstanceResult(
             instance=result_type(**instance.as_dict()),
@@ -29,7 +29,7 @@ class ViewShortcuts:
     def render_collection(
         cls,
         collection: list[Model],
-        result_type: Result,
+        result_type: type[Result],
     ) -> CollectionResult[InstanceTypeResult]:
         return CollectionResult(
             collection=[result_type(**instance.as_dict()) for instance in collection],
@@ -43,7 +43,9 @@ class ViewShortcuts:
         result_type: type[Result],
     ) -> CollectionResult[InstanceTypeResult]:
         with Session() as session:
-            statement = select(model_type).options(selectinload(*model_type.SELECTINS))
+            statement = select(model_type)
+            if model_type.SELECTINS:
+                statement = statement.options(selectinload(*model_type.SELECTINS))
             collection = session.scalars(statement).fetchall()
 
         return cls.render_collection(collection, result_type)
@@ -56,9 +58,9 @@ class ViewShortcuts:
         result_type: type[Result],
     ) -> InstanceResult[InstanceTypeResult]:
         with Session() as session:
-            statement = (
-                select(model_type).where(model_type.id == instance_id).options(selectinload(*model_type.SELECTINS))
-            )
+            statement = select(model_type).where(model_type.id == instance_id)
+            if model_type.SELECTINS:
+                statement = statement.options(selectinload(*model_type.SELECTINS))
             instance = session.scalars(statement).unique().one()
 
         return cls.render_instance(instance, result_type)
@@ -71,7 +73,8 @@ class ViewShortcuts:
         result_type: type[Result],
     ) -> InstanceResult[InstanceTypeResult]:
         with Session() as session:
-            instance = model_type(**payload.dict())
+            values = payload.dict(exclude_unset=True)
+            instance = model_type(**values)
             session.add(instance)
             session.commit()
 
@@ -86,7 +89,8 @@ class ViewShortcuts:
         result_type: type[Result],
     ) -> InstanceResult[InstanceTypeResult]:
         with Session() as session:
-            session.query(model_type).filter(model_type.id == instance_id).update(payload.dict())
+            values = payload.dict(exclude_unset=True)
+            session.query(model_type).filter(model_type.id == instance_id).update(values)
             session.commit()
 
         return cls.retrieve_instance(model_type, instance_id, result_type)
