@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 from httpx import AsyncClient
 from starlette import status
 
@@ -18,11 +20,15 @@ async def test_update_page(as_anon: AsyncClient, page: Page, book: Book):
         "instance": {
             "id": updated_page.id,
             "content": "{}",
+            "created_at": ANY,
+            "updated_at": ANY,
         },
     }
     assert updated_page.as_dict() == {
         "id": page.id,
         "book_id": book.id,
         "content": "{}",
+        "created_at": ANY,
+        "updated_at": ANY,
     }
     assert response.status_code == status.HTTP_200_OK

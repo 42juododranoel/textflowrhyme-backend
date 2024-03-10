@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from textflowrhyme.base.api.serializers import Payload, Result
 
 
@@ -13,4 +15,8 @@ class PageUpdatePayload(Payload):
 
 class PageResult(Result):
     id: int
+
     content: str
+
+    created_at: datetime
+    updated_at: datetime

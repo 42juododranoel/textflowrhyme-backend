@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 from httpx import AsyncClient
 from starlette import status
 
@@ -13,7 +15,16 @@ async def test_list_books(as_anon: AsyncClient, book: Book, page: Page):
             {
                 "id": book.id,
                 "title": "On Writing Well",
-                "pages": [{"content": "{}", "id": 1}],
+                "pages": [
+                    {
+                        "content": "{}",
+                        "id": ANY,
+                        "created_at": ANY,
+                        "updated_at": ANY,
+                    },
+                ],
+                "created_at": ANY,
+                "updated_at": ANY,
             },
         ],
         "count": 1,
@@ -29,7 +40,16 @@ async def test_retrieve_books(as_anon: AsyncClient, book: Book, page: Page):
         "instance": {
             "id": book.id,
             "title": "On Writing Well",
-            "pages": [{"content": "{}", "id": 1}],
+            "pages": [
+                {
+                    "content": "{}",
+                    "id": ANY,
+                    "created_at": ANY,
+                    "updated_at": ANY,
+                },
+            ],
+            "created_at": ANY,
+            "updated_at": ANY,
         },
     }
     assert response.status_code == status.HTTP_200_OK

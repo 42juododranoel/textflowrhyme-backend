@@ -1,5 +1,7 @@
 import typing as t
+from datetime import datetime
 
+from sqlalchemy import Column, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -8,7 +10,18 @@ class Model(DeclarativeBase):
 
     # Fields
 
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[int] = mapped_column(
+        primary_key=True,
+    )
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow,
+    )
+    updated_at = Column(
+        DateTime,
+        default=datetime.now,
+        onupdate=datetime.now,
+    )
 
     # Relations
 

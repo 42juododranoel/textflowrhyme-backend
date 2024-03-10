@@ -20,7 +20,7 @@ class Page(Model):
 
     # Fields
 
-    content = Column(String(65535))
+    content = Column(String)
 
     # Relations
 

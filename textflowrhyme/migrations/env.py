@@ -19,7 +19,7 @@ if config.config_file_name is not None:
 target_metadata = Model.metadata
 
 
-def choose_sequential_rev_id(
+def choose_sequential_revision_id(
     context: MigrationContext,
     revision: tuple[str],  # noqa: ARG001
     directives: list[MigrationScript],
@@ -28,11 +28,11 @@ def choose_sequential_rev_id(
     head_revision = ScriptDirectory.from_config(context.config).get_current_head()
 
     if head_revision is None:
-        new_rev_id = 1
+        new_revision_id = 1
     else:
-        last_rev_id = int(head_revision.lstrip("0"))
-        new_rev_id = last_rev_id + 1
-    migration_script.rev_id = f"{new_rev_id:04}"
+        last_revision_id = int(head_revision.lstrip("0"))
+        new_revision_id = last_revision_id + 1
+    migration_script.rev_id = f"{new_revision_id:04}"
 
 
 def run_migrations_offline() -> None:
@@ -54,7 +54,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        process_revision_directives=choose_sequential_rev_id,
+        process_revision_directives=choose_sequential_revision_id,
     )
 
     with context.begin_transaction():
@@ -79,7 +79,7 @@ def run_migrations_online() -> None:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            process_revision_directives=choose_sequential_rev_id,
+            process_revision_directives=choose_sequential_revision_id,
         )
 
         with context.begin_transaction():

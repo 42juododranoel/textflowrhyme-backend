@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 from httpx import AsyncClient
 from starlette import status
 
@@ -13,6 +15,8 @@ async def test_list_pages(as_anon: AsyncClient, page: Page):
             {
                 "id": page.id,
                 "content": "{}",
+                "created_at": ANY,
+                "updated_at": ANY,
             },
         ],
         "count": 1,
@@ -28,6 +32,8 @@ async def test_retrieve_pages(as_anon: AsyncClient, page: Page):
         "instance": {
             "id": page.id,
             "content": "{}",
+            "created_at": ANY,
+            "updated_at": ANY,
         },
     }
     assert response.status_code == status.HTTP_200_OK

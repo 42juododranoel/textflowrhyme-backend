@@ -20,11 +20,14 @@ class Book(Model):
 
     # Fields
 
-    title = Column(String(255))
+    title = Column(String)
 
     # Relations
 
-    pages: Mapped[list[Page]] = relationship(back_populates="book")
+    pages: Mapped[list[Page]] = relationship(
+        back_populates="book",
+        cascade="all, delete-orphan",
+    )
 
     # Meta
 

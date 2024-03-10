@@ -1,3 +1,5 @@
+from unittest.mock import ANY
+
 from httpx import AsyncClient
 from starlette import status
 
@@ -20,10 +22,14 @@ async def test_create_book(as_anon: AsyncClient):
             "id": created_book.id,
             "title": "On Writing Well",
             "pages": [],
+            "created_at": ANY,
+            "updated_at": ANY,
         },
     }
     assert created_book.as_dict() == {
         "id": created_book.id,
         "title": "On Writing Well",
+        "created_at": ANY,
+        "updated_at": ANY,
     }
     assert response.status_code == status.HTTP_201_CREATED
