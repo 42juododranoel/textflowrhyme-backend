@@ -19,6 +19,8 @@ psycopg2 = "^2.9.9"
 fief-client = {extras = ["fastapi"], version = "^0.18.6"}
 sqlalchemy = {extras = ["mypy"], version = "^2.0.27"}
 alembic = "^1.13.1"
+asyncpg = "^0.29.0"
+fastapi-users = {extras = ["sqlalchemy"], version = "^12.1.3"}
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.10"
