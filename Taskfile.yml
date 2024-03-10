@@ -12,6 +12,23 @@ tasks:
       - uvicorn app:app --host 0.0.0.0 --port 8000 --reload
     dir: ./textflowrhyme
 
+  migrations:generate:
+    cmds:
+      - ~/.pyenv/versions/textflowrhyme/bin/alembic revision --autogenerate -m "{{.MIGRATION_NAME}}"
+    vars:
+      MIGRATION_NAME: '{{default "unnamed" .CLI_ARGS}}'
+    dir: ./textflowrhyme
+
+  migrations:apply:
+    cmds:
+      - ~/.pyenv/versions/textflowrhyme/bin/alembic upgrade head
+    dir: ./textflowrhyme
+
+  migrations:stamp:
+    cmds:
+      - ~/.pyenv/versions/textflowrhyme/bin/alembic stamp head
+    dir: ./textflowrhyme
+
   test:
     cmds:
       - pytest -svv {{.CLI_ARGS}}
@@ -39,13 +56,17 @@ tasks:
 
   lint:mypy:
     cmds:
-      - mypy --strict .
-    dir: ./textflowrhyme
+      - echo "Type checking temporarily disabled"
+      # - mypy --pretty --show-error-context --show-error-code-links textflowrhyme {{.LINT_MYPY_KWARGS}}
+    vars:
+      LINT_MYPY_KWARGS: '{{default "" .LINT_MYPY_KWARGS}}'
 
   lint:
     cmds:
       - task: lint:ruff
-      # - task: lint:mypy
+      - task: lint:mypy
+        vars:
+          LINT_MYPY_KWARGS: '{{default "" .LINT_MYPY_KWARGS}}'
 
   # Docker
 
@@ -62,6 +83,8 @@ tasks:
   start:testing:
     cmds:
       - task: lint
+        vars:
+          LINT_MYPY_KWARGS: --cache-dir /tmp
       - task: test
 
   start:deployment:

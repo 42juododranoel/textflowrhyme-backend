@@ -6,9 +6,6 @@ on:
       - master
   workflow_call:
 
-env:
-  TESTING_TAG: 42juododranoel/textflowrhyme-backend:testing
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,15 +17,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and export to Docker
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          load: true
-          tags: ${{ env.TESTING_TAG }}
-          build-args: |
-            TARGET=testing
+      - name: Start backend dependencies
+        run: |
+          TARGET=testing docker compose up postgres -d
+
+      - name: Build container
+        run: |
+          TARGET=testing docker compose build uvicorn
 
       - name: Lint & Test
         run: |
-          docker run --rm ${{ env.TESTING_TAG }} start:testing      
+          TARGET=testing docker compose run --rm uvicorn start:testing
